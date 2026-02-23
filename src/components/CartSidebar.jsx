@@ -7,6 +7,7 @@ function CartSidebar({
   cart,
   onUpdateQuantity,
   onRemoveItem,
+  onClearCart,   // ✅ Added
 }) {
   // 🧮 Calculate total price
   const calculateTotal = () => {
@@ -18,6 +19,7 @@ function CartSidebar({
 
   return (
     <div className={`cart-sidebar ${isOpen ? "open" : ""}`}>
+      
       {/* 🔝 Header */}
       <div className="cart-header">
         <h2>Your Cart</h2>
@@ -33,6 +35,7 @@ function CartSidebar({
         ) : (
           cart.map((item) => (
             <div key={item.id} className="cart-item">
+              
               {/* 🖼 Product Image */}
               <img
                 src={item.image}
@@ -91,13 +94,21 @@ function CartSidebar({
         )}
       </div>
 
-      {/* 💰 Footer Total */}
+      {/* 💰 Footer Total + Clear Button */}
       {cart.length > 0 && (
         <div className="cart-footer">
           <div className="cart-total">
             <span>Total:</span>
             <span>${calculateTotal().toFixed(2)}</span>
           </div>
+
+          {/* 🧹 Clear Cart Button */}
+          <button 
+            className="clear-cart-btn"
+            onClick={onClearCart}
+          >
+            Clear Cart
+          </button>
         </div>
       )}
     </div>

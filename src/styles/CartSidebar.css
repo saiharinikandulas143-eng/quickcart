@@ -171,3 +171,19 @@
     right: 0;
   }
 }
+.clear-cart-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.clear-cart-btn:hover {
+  background: #dc2626;
+}

@@ -1,14 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import ProductList from './components/ProductList';
-import CartSidebar from './components/CartSidebar';
+import CartSidebar from './components/CartSideBar';
 import { products } from './data/products';
 import './styles/App.css';
 
 function App() {
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  // ✅ Load cart from localStorage
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  // 💾 Save cart whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  // ➕ Add to Cart
   const addToCart = (product) => {
     const existingItem = cart.find((item) => item.id === product.id);
 
@@ -23,12 +35,18 @@ function App() {
     } else {
       setCart([...cart, { ...product, quantity: 1 }]);
     }
+
+    // Toast
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
   };
 
+  // ❌ Remove item
   const removeFromCart = (productId) => {
     setCart(cart.filter((item) => item.id !== productId));
   };
 
+  // 🔢 Update quantity
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
@@ -43,10 +61,29 @@ function App() {
     }
   };
 
-  const toggleCart = () => {
-    setIsCartOpen(!isCartOpen);
+  // 🧹 Clear cart
+  const clearCart = () => {
+    setCart([]);
   };
 
+  // 🔄 Toggle cart
+  const toggleCart = () => {
+    setIsCartOpen((prev) => !prev);
+  };
+
+  // ⌨️ Escape key closes cart
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isCartOpen) {
+        setIsCartOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isCartOpen]);
+
+  // 🧮 Total items
   const getTotalItems = () => {
     return cart.reduce((total, item) => total + item.quantity, 0);
   };
@@ -65,12 +102,29 @@ function App() {
         />
       </main>
 
+      {/* 🔔 Toast */}
+      {showToast && (
+        <div className="toast">
+          Item added to cart ✅
+        </div>
+      )}
+
+      {/* 🌑 Overlay */}
+      {isCartOpen && (
+        <div 
+          className="overlay" 
+          onClick={() => setIsCartOpen(false)}
+        />
+      )}
+
+      {/* 🛒 Cart Sidebar */}
       <CartSidebar 
         isOpen={isCartOpen}
         onClose={toggleCart}
         cart={cart}
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
+        onClearCart={clearCart}
       />
     </div>
   );
