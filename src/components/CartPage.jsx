@@ -1,11 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import '../styles/CartSidebar.css';
+import '../styles/CartPage.css';
 
-function CartSidebar() {
+function CartPage() {
   const {
-    isCartOpen,
-    toggleCart,
     cart,
     updateQuantity,
     removeFromCart,
@@ -13,25 +12,25 @@ function CartSidebar() {
   } = useCart(); // ✅ all from context
 
   return (
-    <div className={`cart-sidebar ${isCartOpen ? 'open' : ''}`}>
-      
-      <div className="cart-header">
-        <h2>Your Cart</h2>
-        <button onClick={toggleCart}>✖</button>
-      </div>
+    <div className="cart-page">
+      <h1>Shopping Cart</h1>
 
       {cart.length === 0 ? (
-        <p className="empty-cart">Your cart is empty</p>
+        <div className="empty-cart-page">
+          <p>Your cart is empty</p>
+          <Link to="/">Continue Shopping</Link>
+        </div>
       ) : (
-        <>
+        <div className="cart-page-content">
+          
           <div className="cart-items">
             {cart.map(item => (
               <div key={item.id} className="cart-item">
                 
                 <img src={item.image} alt={item.name} />
-
+                
                 <div>
-                  <h4>{item.name}</h4>
+                  <h3>{item.name}</h3>
                   <p>₹{item.price}</p>
 
                   <div>
@@ -62,17 +61,25 @@ function CartSidebar() {
                   </button>
                 </div>
 
+                <div>
+                  ₹{item.price * item.quantity}
+                </div>
+
               </div>
             ))}
           </div>
 
-          <div className="cart-footer">
-            <h3>Total: ₹{getTotalPrice()}</h3>
+          <div className="cart-summary">
+            <h2>Total: ₹{getTotalPrice()}</h2>
+
+            <Link to="/">Continue Shopping</Link>
+            <button>Checkout</button>
           </div>
-        </>
+
+        </div>
       )}
     </div>
   );
 }
 
-export default CartSidebar;
+export default CartPage;
